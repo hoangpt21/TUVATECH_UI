@@ -20,9 +20,15 @@ const NewsItemSmall = ({ news }) => {
             <img
               alt={news.title}
               src={news.thumbnail}
+              style={{
+                width: '100%',
+                height: 'auto',
+                maxHeight: '150px',
+              }}
             />
         }
         styles={{body: { padding: 16}}}
+        style={{height: '100%'}}
       >
         <Title 
           level={5}

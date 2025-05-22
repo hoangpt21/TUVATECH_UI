@@ -1,15 +1,13 @@
 import React from 'react';
 import { Typography, Card } from 'antd';
 import { useSearchParams } from 'react-router-dom';
-import {selectTotalProducts} from '../../redux/product/productSlice';
 import ActiveProducts from '../../components/client/ActiveProducts';
-import { useSelector } from 'react-redux';
 
 const { Title } = Typography;
 
 const Search = () => {
   const [searchParams] = useSearchParams();
-  const totalProducts = useSelector(selectTotalProducts);
+  const totalProducts = searchParams.get('total');
   const keyword = searchParams.get('keyword');
 
   return (

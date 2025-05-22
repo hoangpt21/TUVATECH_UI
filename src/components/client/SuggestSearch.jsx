@@ -36,9 +36,9 @@ const styles = {
     }
 }
 
-const Suggestion = ({children, isHeader, product}) => {
+const Suggestion = ({children, isHeader, product, showSuggestions}) => {
     if(isHeader) return (
-        <Link to={`/product/detail`} state={{productId: product.product_id}} onClick={() => setShowSuggestions(false)}>
+        <Link to={`/product/detail`} state={{productId: product.product_id}} onClick={() => showSuggestions(false)}>
             {children}
         </Link>
     )
@@ -50,6 +50,7 @@ function SuggestSearch({isHeader = false, limit, onAddProduct, productIds = []})
     const debouncedSearchValue = useDebounce(searchValue);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [suggestedProducts, setSuggestedProducts] = useState([]);
+    const [totalSuggestedProducts, setTotalSuggestedProducts] = useState(0);
     const [limitList, setLimitList] = useState(limit);
     const wrapperRef = useRef(null);
     useClickOutside(wrapperRef, () => {
@@ -59,11 +60,12 @@ function SuggestSearch({isHeader = false, limit, onAddProduct, productIds = []})
         (async () => {
           if (debouncedSearchValue) {
             const result = await filterProductsAPI({
-              sKw: debouncedSearchValue,
-              limit: limitList,
-              offset: 0,
+                searchKeyword: debouncedSearchValue,
+                limit: limitList,
+                offset: 0,
             })
-            setSuggestedProducts(result);
+            setSuggestedProducts(result?.products || []);
+            setTotalSuggestedProducts(result?.total || 0);
             setShowSuggestions(true);
           } else {
             setShowSuggestions(false);
@@ -83,7 +85,7 @@ function SuggestSearch({isHeader = false, limit, onAddProduct, productIds = []})
           setShowSuggestions(false);
           return;
         }
-        navigate(`/search?keyword=${encodeURIComponent(searchValue)}`);
+        navigate(`/search?keyword=${encodeURIComponent(searchValue)}&total=${totalSuggestedProducts}`);
         setShowSuggestions(false);
         setSearchValue("");
     };
@@ -105,7 +107,7 @@ function SuggestSearch({isHeader = false, limit, onAddProduct, productIds = []})
                         dataSource={suggestedProducts} // Sử dụng state local thay vì từ Redux
                         renderItem={product => (
                             <List.Item>
-                                <Suggestion isHeader={isHeader} product={product}>
+                                <Suggestion isHeader={isHeader} product={product} showSuggestions={setShowSuggestions}>
                                     <Flex justify='space-between' align='center' wrap gap={5} style={{width: '100%'}}>
                                         <Space align='center' size={5}>
                                             <Image

@@ -10,6 +10,7 @@ const ProductItem = ({ product }) => {
 
   useEffect(() => {
     if (product) {
+      console.log(product);
       const discount = Math.round(((product.price - product.selling_price) / product.price) * 100);
       setDiscountPercent(discount);
       if(product.stock_quantity === product.reserved_quantity && product.stock_quantity > 0) setInStock("Tạm hết hàng");

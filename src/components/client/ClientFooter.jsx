@@ -88,8 +88,8 @@ const ClientFooter = () => {
             >
               Tra cứu đơn hàng
             </Link>
-            <Link to="/warranty-check" style={styles.text}>Tra cứu bảo hành</Link>
-            <Link to="/support" style={styles.text}>Liên hệ hỗ trợ</Link>
+            {/* <Link to="/warranty-check" style={styles.text}>Tra cứu bảo hành</Link> */}
+            {currentAccount?.role === 'client' && <Link to="/tmember/support" style={styles.text}>Liên hệ hỗ trợ</Link>}
           </Space>
         </Col>
 
@@ -99,13 +99,13 @@ const ClientFooter = () => {
           </Title>
           <Space direction="vertical" size={16}>
             <Space>
-              <LinkTyPo href="https://facebook.com/tuvatech" target="_blank">
+              <LinkTyPo href="https://facebook.com" target="_blank">
                 <FacebookOutlined style={styles.socialIcon} />
               </LinkTyPo>
-              <LinkTyPo href="https://youtube.com/@tuvatech" target="_blank">
+              <LinkTyPo href="https://youtube.com" target="_blank">
                 <YoutubeOutlined style={styles.socialIcon} />
               </LinkTyPo>
-              <LinkTyPo href="https://instagram.com/tuvatech.vn" target="_blank">
+              <LinkTyPo href="https://instagram.com" target="_blank">
                 <InstagramOutlined style={styles.socialIcon} />
               </LinkTyPo>
             </Space>
@@ -113,7 +113,7 @@ const ClientFooter = () => {
               TuvaTech - Hệ thống cửa hàng công nghệ tiên phong. Hãy theo dõi chúng tôi trên mạng xã hội để cập nhật những thông tin mới nhất về sản phẩm và khuyến mãi!
             </Text>
             <Text style={styles.text}>
-              <EnvironmentOutlined /> Địa chỉ: 123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh
+              <EnvironmentOutlined /> Địa chỉ: 123 Đường ABC, Quận Nam Từ Liêm, Hà Nội
             </Text>
             <Text style={styles.text}>
               <ClockCircleOutlined /> Giờ làm việc: 8:00 - 21:00 (Thứ 2 - Chủ nhật)

@@ -6,7 +6,7 @@ import { Layout, Row,Modal, Col, Typography, Button, Card, Space, Spin, Empty, m
 import { ShoppingCartOutlined, UserOutlined, LeftOutlined, 
   RightOutlined, MobileOutlined, GiftOutlined, 
   SafetyCertificateOutlined, DollarOutlined, DownOutlined, 
-  ClockCircleOutlined, PlusCircleOutlined, PlusOutlined, CloseOutlined,
+  ClockCircleOutlined, PlusCircleOutlined, CloseOutlined,
   PlusSquareOutlined} from '@ant-design/icons';
 import { addToCart } from '../../redux/cart/cartSlice';
 import { 
@@ -14,8 +14,6 @@ import {
   selectProductDetail,
   fetchProductAttributesByProductId,
   selectProductAttributes,
-  setProductDetail,
-  selectActiveProducts
 } from '../../redux/product';
 import { fetchProductImages, fetchReviewImages,createImage, selectReviewImages, selectProductImages } from '../../redux/image/imageSlice';
 import { getReviewsByProduct, createReview, selectReviews } from '../../redux/review/reviewSlice';
@@ -34,7 +32,6 @@ function ProductDetail() {
   const productId = state?.productId;
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const acctiveProducts = useSelector(selectActiveProducts);
   const product = useSelector(selectProductDetail);
   const productImages = useSelector(selectProductImages);
   const reviewImages = useSelector(selectReviewImages);
@@ -63,9 +60,8 @@ function ProductDetail() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const existingProduct = acctiveProducts.find(b => b.product_id === parseInt(productId));
         const res =  await Promise.all([
-          existingProduct? dispatch(setProductDetail(existingProduct)) : dispatch(fetchProductById({id: productId})),
+          dispatch(fetchProductById({id: productId})),
           dispatch(fetchProductImages({productId, isAll: true})),
           dispatch(fetchProductAttributesByProductId({ productId, isAll: true})),
           dispatch(getReviewsByProduct({productId, isAll: true})),
@@ -86,7 +82,7 @@ function ProductDetail() {
     };
     fetchData();
     window.scrollTo(0, 0);
-  }, [dispatch]);
+  }, [dispatch, productId]);
 
   useEffect(() => {
     setCompareProducts([product]);

@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Empty, Space, Button, Spin, Badge } from 'antd';
 import { CloseOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchFilteredActiveProducts, selectActiveProducts, selectTotalProducts } from '../../redux/product';
+import { selectTotalProducts } from '../../redux/product';
 import ProductItem from './ProductItem';
 import ProductFilter from './ProductFilter';
+import { filterProductsAPI } from '../../apis';
 
 const ActiveProducts = ({ 
   brandId = null,
   searchKeyword = ''
 }) => {
   const dispatch = useDispatch();
-  const products = useSelector(selectActiveProducts);
-  const totalProducts = useSelector(selectTotalProducts);
+  const [products, setProducts] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -30,18 +31,21 @@ const ActiveProducts = ({
 
   useEffect(() => {
     loadProducts(0, filterParams);
-  }, []);
+  }, [dispatch]);
 
   const loadProducts = async (newOffset = 0, filterParams) => {
     setLoading(true);
     try {
-      const result = await dispatch(fetchFilteredActiveProducts({
+      const result = await filterProductsAPI({
         ...filterParams,
         limit: 20,
         offset: newOffset
-      }));
-
-      if (result?.payload?.length < 20) {
+      });
+      if (result?.products.length > 0) {
+        setProducts(prev => newOffset === 0 ? result.products : [...prev, ...result.products]);
+        setTotalProducts(result?.total);
+      }
+      if (result?.products.length < 20) {
         setHasMore(false);
       }
       
