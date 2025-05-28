@@ -65,7 +65,6 @@ authorizeAxiosInstance.interceptors.response.use((response) => {
     if(error.response?.status !== 410) {
         message.error(errorMessage);
     }
-    console.log(error)
     return Promise.reject(error);
 });
 

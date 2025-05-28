@@ -40,13 +40,32 @@ export const getWardsAPI = async (districtCode) => {
     return response.data;
 }
 
-export const filterProductsAPI = async (filter) => {
+export const filterProductsAPI = async ({ 
+    searchKeyword = '',
+    sortBy = '',
+    minPrice = null,
+    maxPrice = null,
+    categoryId = null,
+    brandId = null,
+    select = '*',
+    limit = 50,
+    offset = 0
+  }) => {
+    const params = {
+      sKw: searchKeyword,
+      srt: sortBy,
+      minP: minPrice,
+      maxP: maxPrice,
+      ctgId: categoryId,
+      brId: brandId,
+      select,
+      limit,
+      offset
+    };
     const response = await authorizeAxiosInstance.get(`/v1/products/active/filter`, {
-        params: {
-            ...filter
-        }
+        params
     });
-    return response.data?.products;
+    return {products: response.data?.products, total: response.data?.total};
 }
 
 export const bestSellersAPI = async ({limit, offset}) => {

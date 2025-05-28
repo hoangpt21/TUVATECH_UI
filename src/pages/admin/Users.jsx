@@ -133,6 +133,7 @@ const Users = () => {
   return (
     <Card 
       title="Quản lý người dùng"
+      loading={loading}
       extra={
         <Button
         color='cyan'

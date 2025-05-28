@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Empty, Space, Button, Spin, Badge } from 'antd';
 import { CloseOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectTotalProducts } from '../../redux/product';
 import ProductItem from './ProductItem';
 import ProductFilter from './ProductFilter';
 import { filterProductsAPI } from '../../apis';
@@ -11,7 +9,6 @@ const ActiveProducts = ({
   brandId = null,
   searchKeyword = ''
 }) => {
-  const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -31,7 +28,7 @@ const ActiveProducts = ({
 
   useEffect(() => {
     loadProducts(0, filterParams);
-  }, [dispatch]);
+  }, []);
 
   const loadProducts = async (newOffset = 0, filterParams) => {
     setLoading(true);
@@ -47,7 +44,7 @@ const ActiveProducts = ({
       }
       if (result?.products.length < 20) {
         setHasMore(false);
-      }
+      } else setHasMore(true);
       
       if (newOffset === 0) {
         setOffset(20);
@@ -69,7 +66,6 @@ const ActiveProducts = ({
       brandId: selectedBrand || prev.brandId
     }));
     setOffset(0);
-    setHasMore(true);
     await loadProducts(0, {
       ...filterParams,
       sortBy,

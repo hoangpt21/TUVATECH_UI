@@ -61,7 +61,7 @@ function PaymentConfirmation() {
           )}
 
           <Card style={{ textAlign: 'left' }} size='small' title={<Title level={5} style={{margin: 0}}>Thông tin đơn hàng</Title>}>
-            <Descriptions column={2} size="small">
+            <Descriptions column={{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 1, xs: 1 }}  size="small">
               <Descriptions.Item label={<Text type="secondary">Mã đơn hàng</Text>}>
                 <Text strong>{order.order_id}</Text>
               </Descriptions.Item>

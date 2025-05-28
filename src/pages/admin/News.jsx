@@ -128,6 +128,8 @@ const News = () => {
         { title: 'Tiêu đề', dataIndex: 'title' },
         { title: 'Danh mục', dataIndex: 'category_name' },
         { title: 'Bút danh', dataIndex: 'pseudonym' },
+        { title: 'Lượt thích', dataIndex: 'likes' },
+        { title: 'Lượt không thích', dataIndex: 'dislikes' },
         { title: 'Ngày đăng', dataIndex: 'published_date' },
         { title: 'Trạng thái', dataIndex: 'status' },
         { title: 'Ngày tạo', dataIndex: 'created_at' }

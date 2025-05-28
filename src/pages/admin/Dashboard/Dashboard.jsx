@@ -112,27 +112,42 @@ const Dashboard = () => {
         periodLabel = 'tháng';
         break;
     }
-    const filterListByDate = (listObj,typedate, start, end) =>
+
+    const filterListByDate = (listObj, typedate, start, end) =>
       listObj.filter(obj =>
         dayjs(obj[typedate]).isValid() && dayjs(obj[typedate]).isBetween(start, end, null, '[]')
       );
-    const currentOrders = filterListByDate(orders, 'order_date', startDate, endDate);
-    const previousOrders = filterListByDate(orders, 'order_date', previousStartDate, previousEndDate);
 
-    const currentDeliveredOrders = currentOrders.filter(o => o.status === 'delivered');
-    const previousDeliveredOrders = previousOrders.filter(o => o.status === 'delivered');
+    // Filter delivered orders based on updated_at
+    const currentDeliveredOrders = filterListByDate(orders, 'updated_at', startDate, endDate)
+      .filter(o => o.status === 'delivered');
+    const previousDeliveredOrders = filterListByDate(orders, 'updated_at', previousStartDate, previousEndDate)
+      .filter(o => o.status === 'delivered');
+
+    // Filter orders for revenue calculation based on payment date and paid status
+    const filterOrdersByPaymentDate = (orders, start, end) => {
+      return orders.filter(order => {
+        return order.payment_status === 'paid' &&
+               order.payment_date &&
+               dayjs(order.payment_date).isValid() &&
+               dayjs(order.payment_date).isBetween(start, end, null, '[]');
+      });
+    };
+
+    const currentPeriodOrders = filterOrdersByPaymentDate(orders, startDate, endDate);
+    const previousPeriodOrders = filterOrdersByPaymentDate(orders, previousStartDate, previousEndDate);
 
     const calculateTotalRevenue = (orderList) =>
       orderList.reduce((sum, order) => sum + (Number(order.total_price) || 0), 0);
     
     const currentData = {
       totalOrders: currentDeliveredOrders.length,
-      totalRevenue: calculateTotalRevenue(currentOrders.filter(o => o.payment_status === 'paid')),
+      totalRevenue: calculateTotalRevenue(currentPeriodOrders),
     };
 
     const previousData = {
       totalOrders: previousDeliveredOrders.length,
-      totalRevenue: calculateTotalRevenue(previousOrders.filter(o => o.payment_status === 'paid')),
+      totalRevenue: calculateTotalRevenue(previousPeriodOrders),
     };
 
     return { currentPeriodData: currentData, previousPeriodData: previousData, periodLabel: periodLabel };
@@ -140,7 +155,6 @@ const Dashboard = () => {
 
   // --- Stats Calculation ---
   const stats = useMemo(() => {
-
     return {
       totalOrders: currentPeriodData.totalOrders,
       totalProducts: totalProducts, // Not filtered by date
@@ -197,23 +211,38 @@ const Dashboard = () => {
 
   // --- Chart Data Calculation (Based on chartDateRange) ---
   const chartFilteredOrders = useMemo(() => {
-    if (!chartDateRange || chartDateRange.length !== 2) {
-      return []; // Return empty if range is invalid
-    }
+    if (!chartDateRange?.length === 2) return [];
     const [start, end] = chartDateRange;
-    // Adjust end date based on picker type for inclusive range
-    const adjustedEnd = chartFilterType === 'year' ? end.endOf('year')
-                      : chartFilterType === 'month' ? end.endOf('month')
-                      : end.endOf('day'); // Default to day
-
-    return orders.filter(order => {
-      const orderDate = dayjs(order.order_date);
-      return orderDate.isValid() && orderDate.isBetween(start.startOf(chartFilterType === 'day' ? 'day' : chartFilterType), adjustedEnd, null, '[]');
+    const getAdjustedEndDate = (date, type) => {
+      switch(type) {
+        case 'year': return date.endOf('year');
+        case 'month': return date.endOf('month'); 
+        default: return date.endOf('day');
+      }
+    };
+    const adjustedEnd = getAdjustedEndDate(end, chartFilterType);
+    const adjustedStart = start.startOf(chartFilterType === 'day' ? 'day' : chartFilterType);
+    // Filter orders by updated_at date
+    const ordersByUpdateDate = orders.filter(order => {
+      const updateDate = dayjs(order.updated_at);
+      return updateDate.isValid() && 
+             updateDate.isBetween(adjustedStart, adjustedEnd, null, '[]');
     });
+    // Filter orders by payment_date
+    const ordersByPaymentDate = orders.filter(order => {
+      if (!order.payment_date) return false;
+      const paymentDate = dayjs(order.payment_date);
+      return paymentDate.isValid() && 
+             paymentDate.isBetween(adjustedStart, adjustedEnd, null, '[]');
+    });
+    return {
+      ordersByUpdateDate,
+      ordersByPaymentDate
+    };
   }, [orders, chartDateRange, chartFilterType]);
 
   const chartOrderStatusData = useMemo(() => {
-    const statusCounts = chartFilteredOrders.reduce((acc, order) => {
+    const statusCounts = chartFilteredOrders.ordersByUpdateDate.reduce((acc, order) => {
       acc[order.status] = (acc[order.status] || 0) + 1;
       return acc;
     }, {});
@@ -221,7 +250,7 @@ const Dashboard = () => {
   }, [chartFilteredOrders]);
 
   const chartRevenueData = useMemo(() => {
-    const paidOrders = chartFilteredOrders.filter(o => o.payment_status === 'paid');
+    const paidOrders = chartFilteredOrders.ordersByPaymentDate.filter(o => o.payment_status === 'paid');
     const groupedRevenue = paidOrders.reduce((acc, order) => {
        const dateKey = dayjs(order.order_date).format('YYYY-MM-DD'); // Keep daily grouping for revenue chart for now
        acc[dateKey] = (acc[dateKey] || 0) + Number(order.total_price);
@@ -236,7 +265,7 @@ const Dashboard = () => {
       return [];
     }
     const paidOrderItems = orderItems.filter(item =>
-      chartFilteredOrders
+      chartFilteredOrders.ordersByPaymentDate
         .filter(order => order?.payment_status === 'paid')
         .some(order => order.order_id === item.order_id)
     );
@@ -409,7 +438,7 @@ const Dashboard = () => {
               borderRadius: '8px',
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
             }}
-            title="Sản phẩm bán chạy"
+            title="Top 10 sản phẩm bán chạy"
             extra={
               <Button 
                 color='cyan'
@@ -422,6 +451,7 @@ const Dashboard = () => {
               }
           >
             <Table
+              bordered
               scroll={{ x: 600 }}
               style={{ width: "100%" }}
               columns={productColumns}

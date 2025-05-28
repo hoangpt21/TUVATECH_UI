@@ -339,11 +339,7 @@ const ImportForm = ({ form, onFinish, oldImportsDetalsLlength, setOldImportsDeta
               scroll={{ x: 900 }}
               style={{ width: "100%" }}
               columns={columns(fields, remove, form, selectedProduct)}
-              pagination={{
-                position: ["bottomCenter"],
-                showSizeChanger: false,
-                pageSize: 5,
-              }}
+              pagination={false}
               rowKey="key"
             />
           </>

@@ -43,8 +43,8 @@ const ReviewDetail = ({ review: reviewObj }) => {
           <Card title="Thông tin sản phẩm" size='small' style={{marginTop: 16}}>
             <Space direction="vertical" size="small" style={{ width: '100%' }}>
               <Text strong style={{ wordBreak: 'break-word' }}>{productData.product_name || 'N/A'}</Text>
-              <Text type="secondary">Giá gốc: {productData.price ? `${productData.price.toLocaleString('vi-VN')}đ` : 'N/A'}</Text>
-              <Text type="secondary">Giá bán: {productData.selling_price ? `${productData.selling_price.toLocaleString('vi-VN')}đ` : 'N/A'}</Text>
+              <Text type="secondary">Giá gốc: {productData.price ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(productData.price) : 'N/A'}</Text>
+              <Text type="secondary">Giá bán: {productData.selling_price ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(productData.selling_price) : 'N/A'}</Text>
               <Text type="secondary">Số lượng trong kho: {productData.stock_quantity || 'N/A'}</Text>
               <Space>
                 <Text type="secondary">Đánh giá trung bình:</Text>

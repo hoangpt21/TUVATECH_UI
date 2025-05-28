@@ -223,7 +223,7 @@ function InventoryDashboard() {
         price: formatCurrency(product.price),
         selling_price: formatCurrency(product.selling_price),
         reserved_quantity: product.reserved_quantity,
-        sold: orderItems
+        quantity_delivered: orderItems
           .filter(item => 
             item.product_id === product.product_id &&
             orders.find(o => o.order_id === item.order_id)?.status === 'delivered'
@@ -241,7 +241,7 @@ function InventoryDashboard() {
         { title: 'Tên sản phẩm', dataIndex: 'product_name' },
         { title: 'Giá', dataIndex: 'price'},
         { title: 'Giá khuyến mãi', dataIndex: 'selling_price'},
-        { title: 'Đã bán', dataIndex: 'sold'},
+        { title: 'Đã giao', dataIndex: 'quantity_delivered'},
         { title: 'Đặt trước', dataIndex: 'reserved_quantity'},
         { title: 'Còn lại', dataIndex: 'stock_quantity'}
       ];
@@ -303,7 +303,7 @@ function InventoryDashboard() {
         </Space>
       )
     },
-    { title: 'Đã bán', dataIndex: 'sold', key: 'sold', align: 'center', width: 120 },
+    { title: 'Đã giao', dataIndex: 'quantity_delivered', key: 'quantity_delivered', align: 'center', width: 120 },
     { title: 'Đặt trước', dataIndex:'reserved_quantity', key:'reserved_quantity', align: 'center', width: 120 },
     { title: 'Còn lại', dataIndex: 'stock_quantity', key: 'stock_quantity', align: 'center', width: 120 }
   ];

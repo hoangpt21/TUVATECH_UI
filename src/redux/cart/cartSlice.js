@@ -44,7 +44,7 @@ export const addToCart = createAsyncThunk(
 
 export const removeFromCart = createAsyncThunk(
   'cart/removeFromCart',
-  async ({productId, isOrdered = false}) => {
+  async ({productId, isOrdered = ''}) => {
     await authorizeAxiosInstance.delete(`/v1/carts/${productId}`, {
       params: {
         isOrdered

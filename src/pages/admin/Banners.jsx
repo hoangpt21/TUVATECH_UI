@@ -191,7 +191,6 @@ const Banners = () => {
           form.resetFields();
         }}
         centered
-        styles={{body: {overflow: "hidden", height: 500}}}
         confirmLoading={loading}
         maskClosable={false}
       >

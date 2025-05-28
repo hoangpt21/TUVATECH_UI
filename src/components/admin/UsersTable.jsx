@@ -8,6 +8,7 @@ const styles = {
     backgroundColor: '#1890ff'
   },
   userInfo: {
+    textAlign: 'left',
     display: 'flex',
     flexDirection: 'column'
   },
@@ -53,10 +54,9 @@ const UsersTable = ({ users, loading, onViewDetails, onToggleStatus, searchText 
     {
       title: 'Thông tin',
       key: 'info',
-      width: 300,
       align: 'center',
       render: (_, record) => (
-        <Flex align="center" gap="small" justify="center">
+        <Flex align="center" gap="small" justify="start">
           <Avatar 
             src={record.avatar_url} 
             size={40}
@@ -75,6 +75,7 @@ const UsersTable = ({ users, loading, onViewDetails, onToggleStatus, searchText 
       title: 'Số điện thoại',
       dataIndex: 'phone',
       key: 'phone',
+      width: 200,
       align: 'center',
       render: (text) => (
         searchText ? (
@@ -166,7 +167,7 @@ const UsersTable = ({ users, loading, onViewDetails, onToggleStatus, searchText 
         pageSize: 10,
         showTotal: (total) => `Tổng: ${total} người dùng`,
       }}
-      scroll={{ x: 1200 }}
+      scroll={{ x: 1000 }}
       bordered
     />
   );

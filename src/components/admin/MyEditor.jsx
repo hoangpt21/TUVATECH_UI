@@ -269,7 +269,7 @@ export default function MyEditor({value, onChange}) {
 						reversed: true
 					}
 				},
-				placeholder: 'Type or paste your content here!',
+				placeholder: 'Nhập hoặc dán nội dung của bạn vào đây!',
 				table: {
 					contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
 				},

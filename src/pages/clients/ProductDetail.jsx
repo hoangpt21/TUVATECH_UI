@@ -218,22 +218,25 @@ function ProductDetail() {
                   />
                   <Carousel 
                     ref={carouselRef}
+                    slidesToScroll={1}
                   >
                     {productImages.map((image) => (
-                      <div key={image.image_id} style={{width: '100%'}}>
-                        <Image
-                          src={image.image_url}
-                          alt={product.product_name}
-                          style={{
-                            width: '100%',
-                            objectFit: 'contain',
-                            background: '#fff',
-                            borderRadius: '8px'
-                          }}
-                          preview={{
-                            mask: null
-                          }}
-                        />
+                      <div style={{width: '100%'}} key={image.image_id}>
+                        <Flex justify='center' align='center' style={{width: '100%'}}>
+                          <Image
+                            src={image.image_url}
+                            alt={product.product_name}
+                            style={{
+                              width: '100%',
+                              maxHeight: 400,
+                              objectFit: 'contain',
+                              borderRadius: '8px'
+                            }}
+                            preview={{
+                              mask: null
+                            }}
+                          />
+                        </Flex>
                       </div>
                     ))}
                   </Carousel>
@@ -300,6 +303,7 @@ function ProductDetail() {
                   </Carousel>
                 </div>
               </Col>
+              
               <Col xs={24} md={10}>
                 <Space direction="vertical" size={16} style={{ width: '100%' }}>
                   <Title level={3} style={{ margin: 0 }}>{product.product_name}</Title>

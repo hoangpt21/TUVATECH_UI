@@ -152,6 +152,7 @@ function Checkout() {
             product_id: item.product_id,
             quantity: item.quantity,
             subtotal_price: item.selling_price * item.quantity,
+            price: item.selling_price,
             product_name: item.product_name,
             thumbnail: item.thumbnail,
           }))),

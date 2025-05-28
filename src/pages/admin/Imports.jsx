@@ -62,8 +62,11 @@ const Imports = () => {
       };
     } );   
     setFilteredImports(originalImports.current);
+  }, [imports, importDetails]);
+
+  useEffect(() => {
     setProductDetails(products);
-  }, [imports, importDetails, products]);
+  }, [products])
 
   const handleAdd = () => {
     setEditingImport(null);
@@ -138,6 +141,7 @@ const Imports = () => {
         message.success('Thêm đơn nhập hàng thành công');
       }
     }
+    await dispatch(fetchAllProducts({isAll: true}));
     setModalVisible(false);
     form.resetFields();
     setLoading(false);

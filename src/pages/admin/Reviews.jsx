@@ -34,41 +34,83 @@ const Reviews = () => {
   const [enrichedReviews, setEnrichedReviews] = useState([]);
 
   useEffect(() => {
-    setLoading(true);
-    Promise.all([
-      dispatch(getAllReviews({isAll: true})),
-      dispatch(fetchReviewImages({isAll: true, reviewId: true}))
-    ])
-    .finally(() => setLoading(false));
+    (async () => {
+      setLoading(true);
+      await Promise.all([
+        dispatch(getAllReviews({isAll: true})),
+        dispatch(fetchReviewImages({isAll: true, reviewId: true}))
+      ])
+      setLoading(false);
+    })()
   }, [dispatch]);
 
   useEffect(() => {
     const getEnrichedReviews = async () => {
       if (!reviews) return;
-      let reviewsInfo = [];
-      let index = 1;
-      for (let review of reviews) {
-        const res = await Promise.all([
-          dispatch(fetchProductById({id: review?.product_id})),
-          dispatch(listUserDetail(review?.user_id))
+      setLoading(true);
+      try {
+        // Get unique product and user IDs
+        const uniqueProductIds = [...new Set(reviews.map(review => review.product_id))];
+        const uniqueUserIds = [...new Set(reviews.map(review => review.user_id))];
+
+        // Create maps to store product and user data
+        const productMap = new Map();
+        const userMap = new Map();
+
+        // Fetch unique products and users in parallel
+        const [productResults, userResults] = await Promise.all([
+          Promise.all(uniqueProductIds.map(id => dispatch(fetchProductById({id})))),
+          Promise.all(uniqueUserIds.map(id => dispatch(listUserDetail(id))))
         ]);
-        if (!res[0]?.error && !res[1]?.error) {
-          let images = reviewImages.filter(img => img.review_id == review.review_id)
-          reviewsInfo.push({
+
+        // Populate product and user maps
+        uniqueProductIds.forEach((id, index) => {
+          if (!productResults[index].error) {
+            productMap.set(id, productResults[index].payload);
+          }
+        });
+
+        uniqueUserIds.forEach((id, index) => {
+          if (!userResults[index].error) {
+            userMap.set(id, userResults[index].payload);
+          }
+        });
+
+        // Create image map for faster lookup
+        const imageMap = new Map();
+        reviewImages.forEach(img => {
+          if (!imageMap.has(img.review_id)) {
+            imageMap.set(img.review_id, []);
+          }
+          imageMap.get(img.review_id).push(img);
+        });
+
+        // Build enriched reviews array using the maps
+        const reviewsInfo = reviews.map((review, index) => {
+          const product = productMap.get(review.product_id);
+          const user = userMap.get(review.user_id);
+          
+          if (!product || !user) return null;
+
+          return {
             ...review,
-            review_code: '#'+index,
-            reviewImages: images,
-            product: res[0].payload,
-            user: res[1].payload
-          });
-          index++;
-        }
+            review_code: '#' + (index + 1),
+            reviewImages: imageMap.get(review.review_id) || [],
+            product,
+            user
+          };
+        }).filter(Boolean);
+
+        setEnrichedReviews(reviewsInfo);
+      } catch (error) {
+        console.error('Error enriching reviews:', error);
+      } finally {
+        setLoading(false);
       }
-      setEnrichedReviews(reviewsInfo);
     };
-  
+    
     getEnrichedReviews();
-  }, [reviews, reviewImages, dispatch]);
+  }, [reviews, reviewImages]);
   
 
 
@@ -104,8 +146,6 @@ const Reviews = () => {
   };
 
   const handleUpdateStatus = async (reviewId, status) => {
-    console.log(status)
-    console.log(reviewId)
     await dispatch(updateReview({ reviewId: reviewId, reviewData: { moderation_status: status } }));
     message.success('Cập nhật trạng thái đánh giá thành công');
     setModalVisible(false); // Close modal on success
@@ -146,6 +186,7 @@ const Reviews = () => {
     <Button
       color='cyan'
       variant='solid'
+      disabled={loading}
       icon={<FileExcelOutlined />}
       onClick={handleExport}
     >

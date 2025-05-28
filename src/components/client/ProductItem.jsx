@@ -10,7 +10,6 @@ const ProductItem = ({ product }) => {
 
   useEffect(() => {
     if (product) {
-      console.log(product);
       const discount = Math.round(((product.price - product.selling_price) / product.price) * 100);
       setDiscountPercent(discount);
       if(product.stock_quantity === product.reserved_quantity && product.stock_quantity > 0) setInStock("Tạm hết hàng");
@@ -106,7 +105,7 @@ const ProductItem = ({ product }) => {
           <Space size={5}>
             <Rate 
               disabled 
-              defaultValue={product.avg_rating} 
+              value={product.avg_rating}
               style={{ fontSize: '14px' }}
             /> {product.avg_rating > 0? product.avg_rating: ''}
           </Space>

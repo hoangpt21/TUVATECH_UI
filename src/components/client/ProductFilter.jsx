@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Slider, Typography, Modal, Row, Col } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { getActiveCategories, selectActiveCategories } from '../../redux/category/categorySlice';
+import { fetchActiveCategoriesByType, selectActiveCategories } from '../../redux/category/categorySlice';
 import { getActiveBrands, selectActiveBrands } from '../../redux/brand/brandSlice';
 import { SortDescendingOutlined, SortAscendingOutlined } from '@ant-design/icons';
 
@@ -26,7 +26,7 @@ const ProductFilter = ({ visible, onClose, onFilterChange, useOnReset, useCountF
     if (!location.pathname.includes('/brand')) {
       dispatch(getActiveBrands({ isAll: true }));
     }
-    dispatch(getActiveCategories({ isAll: true }));
+    dispatch(fetchActiveCategoriesByType({ isAll: true, categoryType: 'product' }));
   }, [dispatch, location]);
 
   useEffect(() => {

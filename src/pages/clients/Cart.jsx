@@ -52,9 +52,9 @@ function Cart() {
     }
   };
 
-  const handleRemoveItem = async (productId, cartId) => {
+  const handleRemoveItem = async (productId) => {
     setLoading({...loading, btn: true});
-    const res = await dispatch(removeFromCart({productId, cartId}));
+    const res = await dispatch(removeFromCart({productId}));
     setLoading({...loading, btn: false});
     if(!res?.error) {
       message.success('Xóa sản phẩm khỏi giỏ hàng thành công!');
@@ -223,7 +223,7 @@ function Cart() {
                                 type="text"
                                 danger
                                 icon={<DeleteOutlined />}
-                                onClick={() => handleRemoveItem(product.product_id, cartItem.cart_id)}
+                                onClick={() => handleRemoveItem(product.product_id)}
                               />
                             </Space>
                           </Col>

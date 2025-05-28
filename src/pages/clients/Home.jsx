@@ -254,7 +254,7 @@ function Home() {
       { suggestedProducts.length > 0 &&
         <Card style={{ marginBottom: '24px' }}>
           <Title level={3} style={{ textAlign: 'center', margin: '0 auto 16px'  }}>
-            GỢI Ý LAPTOP NỔI BẬT
+            GỢI Ý CHO BẠN
           </Title>
           <>
             <Row gutter={[16, 16]}>
