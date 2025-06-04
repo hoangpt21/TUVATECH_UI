@@ -16,6 +16,6 @@ if(import.meta.env.PROD) {
 }
 
 
-export const API_ROOT = apiRoot ;
-export const CKEDITOR_LICENSE_KEY = import.meta.env.VITE_CKEDITOR_LICENSE_KEY_TRIAL;
+export const API_ROOT = apiRoot;
+export const CKEDITOR_LICENSE_KEY = ckeditorLicenseKey;
 
